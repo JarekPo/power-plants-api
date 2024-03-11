@@ -31,7 +31,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd power-plants-api
-            docker stop $(docker ps -q --filter "ancestor=${{ secrets.DOCKER_IMAGE_NAME }}") || true
-            docker rm $(docker ps -q --filter "ancestor=${{ secrets.DOCKER_IMAGE_NAME }}") || true
-            docker build -t ${{ secrets.DOCKER_IMAGE_NAME }}:latest .
-            docker run -p 8000:80 -d ${{ secrets.DOCKER_IMAGE_NAME }}:latest
+            docker stop $(docker ps -q --filter "ancestor=${{ env.DOCKER_IMAGE_NAME }}") || true
+            docker rm $(docker ps -q --filter "ancestor=${{ env.DOCKER_IMAGE_NAME }}") || true
+            docker build -t ${{ env.DOCKER_IMAGE_NAME }}:latest .
+            docker run -p 8000:80 -d ${{ env.DOCKER_IMAGE_NAME }}:latest
