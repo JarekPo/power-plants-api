@@ -1,4 +1,4 @@
-name: deploy-to-ec2
+name: Push-to-EC2
 
 # Trigger deployment only on push to main branch
 on:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to EC2 on main branch push
+    name: Deploy to EC2 on master branch push
     runs-on: ubuntu-latest
 
     steps:
@@ -22,9 +22,6 @@ jobs:
           REMOTE_HOST: ${{ secrets.HOST_DNS }}
           REMOTE_USER: ${{ secrets.USERNAME }}
           TARGET: ${{ secrets.TARGET_DIR }}
-          REMOTE_PORT: 22
-          ARGS: -rlgoDzvc -i
-          SSH_CMD_ARGS: -o StrictHostKeyChecking=no
 
       - name: Executing remote ssh commands using ssh key
         uses: appleboy/ssh-action@master
