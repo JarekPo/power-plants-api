@@ -8,7 +8,7 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to EC2 on master branch push
+    name: Deploy to EC2 on main branch push
     runs-on: ubuntu-latest
 
     steps:
@@ -30,7 +30,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd power-plants-api
+            cd ${{ secrets.TARGET_DIR }}
             docker stop $(docker ps -q --filter "ancestor=${{ secrets.DOCKER_IMAGE_NAME }}") || true
             docker rm $(docker ps -q --filter "ancestor=${{ secrets.DOCKER_IMAGE_NAME }}") || true
             docker build -t ${{ secrets.DOCKER_IMAGE_NAME }}:latest .
