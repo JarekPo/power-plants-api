@@ -31,7 +31,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd power-plants-api
-            docker stop \$(docker ps -a -q) || true
-            docker rm \$(docker ps -a -q) || true
+            docker stop $(docker ps -a -q) || true
+            docker rm $(docker ps -a -q) || true
             docker build -t power-plants-api:latest .
             docker run -p 8000:80 -d power-plants-api:latest
