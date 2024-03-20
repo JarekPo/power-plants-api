@@ -1,10 +1,11 @@
-from typing import Dict
+from typing import Dict, List
 from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
-from models.power_plants_data import PowerPlantsDataInput
+from models.power_plants_data import PowerPlantsData, PowerPlantsDataInput
 from services.load_data_service import set_power_plants_data
+from services.power_plants_service import get_all_plants
 
 app = FastAPI(title="Power Plants API", version="0.0.1")
 
@@ -25,6 +26,11 @@ def read_root() -> Dict[str, str]:
 @app.post("/load-data", response_model=PowerPlantsDataInput)
 def handle_data_load() -> Response:
     return set_power_plants_data()
+
+
+@app.get("/get-all-plants", response_model=List[PowerPlantsData])
+def handle_get_all_plants_request() -> List[PowerPlantsData]:
+    return get_all_plants()
 
 
 if __name__ == "__main__":
