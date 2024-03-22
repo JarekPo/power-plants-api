@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import HTTPException
+from fastapi import HTTPException, Query
 from sqlalchemy import create_engine, text
 from sqlmodel import Session
 from models.countries_summary_data import CountriesSummaryData
@@ -86,3 +86,19 @@ def get_countries_summary() -> List[CountriesSummaryData]:
         raise HTTPException(
             status_code=500, detail="Error occurred while fetching summary data"
         )
+
+
+def get_country_plants(
+    country: str = Query(None, title="Country", description="Country of power plants.")
+) -> List[PowerPlantsData]:
+    engine = create_engine(DATABASE_URL, echo=True)
+    with Session(engine) as session:
+        data_query = session.query(PowerPlantsData)
+        data_query = data_query.filter(
+            PowerPlantsData.country_long.ilike(f"%{country}%")
+        )
+    data = data_query.all()
+    if data:
+        return data
+    else:
+        raise HTTPException(status_code=404, detail="No data found for this country")

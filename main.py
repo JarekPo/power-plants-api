@@ -1,5 +1,5 @@
 from typing import Dict, List
-from fastapi import FastAPI, Response
+from fastapi import FastAPI, Query, Response
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
@@ -9,6 +9,7 @@ from services.load_data_service import set_power_plants_data
 from services.power_plants_service import (
     get_all_plants,
     get_countries_summary,
+    get_country_plants,
 )
 
 app = FastAPI(title="Power Plants API", version="0.0.1")
@@ -40,6 +41,13 @@ def handle_get_all_plants_request() -> List[PowerPlantsData]:
 @app.get("/countries-summary", response_model=List[CountriesSummaryData])
 def handle_get_countries_summary_request() -> List[CountriesSummaryData]:
     return get_countries_summary()
+
+
+@app.get("/country-plants", response_model=List[PowerPlantsData])
+def handle_get_country_plants(
+    country: str = Query(None, title="Country", description="Country of power plants.")
+) -> List[PowerPlantsData]:
+    return get_country_plants(country)
 
 
 if __name__ == "__main__":
