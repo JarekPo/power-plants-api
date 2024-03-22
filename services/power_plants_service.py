@@ -2,6 +2,7 @@ from typing import List
 from fastapi import HTTPException
 from sqlalchemy import create_engine, text
 from sqlmodel import Session
+from models.countries_summary_data import CountriesSummaryData
 from models.power_plants_data import PowerPlantsData
 from config import DATABASE_USER, DATABASE_PASSWORD, DATABASE_HOST
 
@@ -45,4 +46,43 @@ def get_all_plants() -> List[PowerPlantsData]:
     else:
         raise HTTPException(
             status_code=500, detail="Error occurred while fetching power plants data"
+        )
+
+
+def get_countries_summary() -> List[CountriesSummaryData]:
+    engine = create_engine(DATABASE_URL, echo=True)
+    with Session(engine) as session:
+        data_query = text(
+            """
+            SELECT 
+                country_long, 
+                COUNT(*) AS plants_number,
+                SUM(capacity_mw) AS total_capacity
+            FROM 
+                powerplantsdata
+            GROUP BY 
+                country_long
+            ORDER BY 
+                country_long ASC;
+            """
+        )
+    results = session.execute(data_query)
+    data = []
+    for row in results:
+        country_long = row[0]
+        plants_number = row[1]
+        total_capacity = row[2]
+        summary_data = CountriesSummaryData(
+            country_long=country_long,
+            plants_number=plants_number,
+            total_capacity=total_capacity,
+        )
+        data.append(summary_data)
+
+    if data:
+        return data
+
+    else:
+        raise HTTPException(
+            status_code=500, detail="Error occurred while fetching summary data"
         )
