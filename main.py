@@ -45,7 +45,7 @@ def handle_get_countries_summary_request() -> List[CountriesSummaryData]:
 
 @app.get("/country-plants", response_model=List[PowerPlantsData])
 def handle_get_country_plants(
-    country: str = Query(None, title="Country", description="Country of power plants.")
+    country: str = Query(..., title="Country", description="Country of power plants.")
 ) -> List[PowerPlantsData]:
     return get_country_plants(country)
 

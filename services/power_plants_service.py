@@ -89,13 +89,13 @@ def get_countries_summary() -> List[CountriesSummaryData]:
 
 
 def get_country_plants(
-    country: str = Query(None, title="Country", description="Country of power plants.")
+    country: str = Query(..., title="Country", description="Country of power plants.")
 ) -> List[PowerPlantsData]:
     engine = create_engine(DATABASE_URL, echo=True)
     with Session(engine) as session:
         data_query = session.query(PowerPlantsData)
         data_query = data_query.filter(
-            PowerPlantsData.country_long.ilike(f"%{country}%")
+            PowerPlantsData.country_long.ilike(f"{country}%")
         )
     data = data_query.all()
     if data:
