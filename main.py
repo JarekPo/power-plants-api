@@ -28,9 +28,9 @@ def read_root() -> Dict[str, str]:
     return {"health": "OK"}
 
 
-@app.post("/load-data", response_model=PowerPlantsDataInput)
-def handle_data_load() -> Response:
-    return set_power_plants_data()
+# @app.post("/load-data", response_model=PowerPlantsDataInput)
+# def handle_data_load() -> Response:
+#     return set_power_plants_data()
 
 
 @app.get("/all-plants", response_model=List[PowerPlantsData])
