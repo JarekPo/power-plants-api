@@ -5,7 +5,8 @@ import uvicorn
 
 from models.countries_summary_data import CountriesSummaryData
 from models.power_plants_data import PowerPlantsData, PowerPlantsDataInput
-from services.load_data_service import set_power_plants_data
+
+# from services.load_data_service import set_power_plants_data
 from services.power_plants_service import (
     get_all_plants,
     get_countries_summary,
