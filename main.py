@@ -4,11 +4,11 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 from models.countries_summary_data import CountriesSummaryData
-from models.geonames_data import GeonamesData
+from models.geonames_data import GeonamesCountry, GeonamesData
 from models.power_plants_data import PowerPlantsData, PowerPlantsDataInput
 
 # from services.load_data_service import set_power_plants_data
-from services.geonames_service import get_geonames_request
+from services.geonames_service import get_geonames_request, search_country_request
 from services.power_plants_service import (
     get_all_plants,
     get_countries_summary,
@@ -61,8 +61,17 @@ def handle_get_country_plants(
 def handle_get_geonames_request(
     latitude: str = Query(..., title="Latitude", description="Country's latitude"),
     longitude: str = Query(..., title="Longitude", description="Country's longitude"),
-) -> Union[GeonamesData, Dict[None, None]]:
+) -> Union[GeonamesCountry, Dict[None, None]]:
     return get_geonames_request(latitude, longitude)
+
+
+@app.get("/geonames/search-country")
+def handle_search_country_request(
+    name: str = Query(
+        ..., title="City name", description="Search country details by city"
+    )
+) -> Union[GeonamesData, Dict[None, None]]:
+    return search_country_request(name)
 
 
 if __name__ == "__main__":
