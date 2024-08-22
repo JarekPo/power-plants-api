@@ -2,7 +2,7 @@ from typing import Dict, Union
 from fastapi import HTTPException, Query
 import requests
 from config import GEONAMES_API_URL, GEONAMES_USERNAME
-from models.geonames_data import GeonamesCountry, GeonamesData
+from models.geonames_data import AlternativeNames, GeonamesCountry, GeonamesData
 
 
 def get_geonames_request(
@@ -26,11 +26,11 @@ def get_geonames_request(
         else:
             return {}
     elif response.status_code == 401:
-        return HTTPException(satus_code=401, detail="Invalid username")
+        raise HTTPException(satus_code=401, detail="Invalid username")
     elif response.status_code == 404:
-        return HTTPException(status_code=404, detail="Not found")
+        raise HTTPException(status_code=404, detail="Not found")
     else:
-        return HTTPException(
+        raise HTTPException(
             status_code=response.status_code, details="Unexpected error"
         )
 
@@ -58,10 +58,37 @@ def search_country_request(
         else:
             return {}
     elif response.status_code == 401:
-        return HTTPException(satus_code=401, detail="Invalid username")
+        raise HTTPException(satus_code=401, detail="Invalid username")
     elif response.status_code == 404:
-        return HTTPException(status_code=404, detail="Not found")
+        raise HTTPException(status_code=404, detail="Not found")
     else:
-        return HTTPException(
+        raise HTTPException(
+            status_code=response.status_code, details="Unexpected error"
+        )
+
+
+def get_alternative_names_request(
+    countryID: str = Query(..., title="Country ID", description="Country ID")
+) -> Union[AlternativeNames, Dict[None, None]]:
+    params = {
+        "geonameId": countryID,
+        "username": GEONAMES_USERNAME,
+    }
+
+    response = requests.get(f"{GEONAMES_API_URL}/getJSON", params=params)
+
+    if response.status_code == 200:
+        data = response.json()
+        if "alternateNames" in data and data["alternateNames"]:
+            names = [name_obj["name"] for name_obj in data.get("alternateNames", [])]
+            return AlternativeNames(alternative_names=names)
+        else:
+            return {}
+    elif response.status_code == 401:
+        raise HTTPException(satus_code=401, detail="Invalid name ID")
+    elif response.status_code == 404:
+        raise HTTPException(status_code=404, detail="Not found")
+    else:
+        raise HTTPException(
             status_code=response.status_code, details="Unexpected error"
         )

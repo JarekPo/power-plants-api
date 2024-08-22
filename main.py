@@ -4,11 +4,15 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 from models.countries_summary_data import CountriesSummaryData
-from models.geonames_data import GeonamesCountry, GeonamesData
+from models.geonames_data import AlternativeNames, GeonamesCountry, GeonamesData
 from models.power_plants_data import PowerPlantsData, PowerPlantsDataInput
 
 # from services.load_data_service import set_power_plants_data
-from services.geonames_service import get_geonames_request, search_country_request
+from services.geonames_service import (
+    get_alternative_names_request,
+    get_geonames_request,
+    search_country_request,
+)
 from services.power_plants_service import (
     get_all_plants,
     get_countries_summary,
@@ -72,6 +76,13 @@ def handle_search_country_request(
     )
 ) -> Union[GeonamesData, Dict[None, None]]:
     return search_country_request(name)
+
+
+@app.get("/geonames/alternative-names")
+def handle_alternative_names_request(
+    countryID: str = Query(..., title="Country ID", description="Country ID")
+) -> Union[AlternativeNames, Dict[None, None]]:
+    return get_alternative_names_request(countryID)
 
 
 if __name__ == "__main__":
